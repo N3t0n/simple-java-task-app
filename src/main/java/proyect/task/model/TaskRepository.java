@@ -1,5 +1,7 @@
 package proyect.task.model;
 
+import proyect.task.exceptions.TaskException;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,6 +10,10 @@ public class TaskRepository {
     List<Task> tasks = new ArrayList<>();
 
     public void save(Task task) {
+        if (task==null){
+            throw new TaskException("Task cannot be null");
+        }
+
         tasks.add(task);
     }
 
@@ -22,10 +28,26 @@ public class TaskRepository {
 
     public void remove(String id) {
         Task task = findById(id);
+        if (task==null){
+            throw new TaskException("Task cannot be null");
+        }
+        tasks.remove(task);
+    }
+    public void remove(Task task) {
+        if (task==null){
+            throw new TaskException("Task cannot be null");
+        }
+
+        if(!tasks.contains(task)){
+            throw new TaskException("Task not found");
+        }
         tasks.remove(task);
     }
 
     public List<Task> findAll() {
+        if (tasks.isEmpty()){
+            throw new TaskException("No tasks found");
+        }
         return tasks;
     }
 
@@ -39,7 +61,13 @@ public class TaskRepository {
     }
 
     public void updateTask(Task updateTask){
+        if (updateTask==null){
+            throw new TaskException("Task cannot be null");
+        }
         int index = findIndexById(updateTask.getId());
+        if (index==-1){
+            throw new TaskException("Invalid Index");
+        }
         tasks.set(index, updateTask);
     }
 
