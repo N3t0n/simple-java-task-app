@@ -9,7 +9,7 @@ public class TaskRepository {
 
     List<Task> tasks = new ArrayList<>();
 
-    public void save(Task task) {
+    public void save(Task task) throws TaskException {
         if (task==null){
             throw new TaskException("Task cannot be null");
         }
@@ -26,14 +26,14 @@ public class TaskRepository {
         return null;
     }
 
-    public void remove(String id) {
+    public void remove(String id) throws TaskException {
         Task task = findById(id);
         if (task==null){
             throw new TaskException("Task cannot be null");
         }
         tasks.remove(task);
     }
-    public void remove(Task task) {
+    public void remove(Task task) throws TaskException {
         if (task==null){
             throw new TaskException("Task cannot be null");
         }
@@ -44,7 +44,7 @@ public class TaskRepository {
         tasks.remove(task);
     }
 
-    public List<Task> findAll() {
+    public List<Task> findAll() throws TaskException {
         if (tasks.isEmpty()){
             throw new TaskException("No tasks found");
         }
@@ -60,7 +60,7 @@ public class TaskRepository {
         return -1;
     }
 
-    public void updateTask(Task updateTask){
+    public void updateTask(Task updateTask) throws TaskException {
         if (updateTask==null){
             throw new TaskException("Task cannot be null");
         }
