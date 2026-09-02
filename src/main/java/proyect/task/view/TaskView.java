@@ -1,8 +1,6 @@
 package proyect.task.view;
 
 import proyect.task.controller.TaskController;
-import proyect.task.exceptions.TaskException;
-import proyect.task.exceptions.TaskValidationException;
 
 import java.util.Scanner;
 
@@ -16,16 +14,16 @@ public class TaskView {
     }
 
     public void showMenu() {
-        while (true){
+        while (true) {
             System.out.println("Task Manager");
             System.out.println("1. Add Task");
             System.out.println("2. Remove Task");
             System.out.println("3. Update Task");
             System.out.println("4. Show Tasks");
             System.out.println("5. Exit");
-            System.out.print("Enter your choice: ");
-            int option = scanner.nextInt();
-            scanner.nextLine();
+
+            int option = askMenuOption();
+
             switch (option) {
                 case 1:
                     addTaskView();
@@ -48,76 +46,114 @@ public class TaskView {
         }
     }
 
-    public void addTaskView(){
+    private void addTaskView() {
         try {
-            System.out.println("Add Task Id");
-            String id = scanner.nextLine();
-
-            System.out.println("Add Task Title");
-            String title = scanner.nextLine();
-
-            System.out.println("Add Task Description");
-            String description = scanner.nextLine();
-
-            System.out.println("Is the task completed? (true/false)");
-            Boolean completed = scanner.nextBoolean();
-            taskController.addTask(id, title, description, completed);
+            TaskInput input = getTaskInput();
+            taskController.addTask(input.id, input.title, input.description, input.completed);
             System.out.println("Task added successfully!!!");
-        } catch (TaskValidationException | TaskException e) {
-            System.out.println("Error: " + e.getMessage());
         } catch (Exception e) {
-            System.out.println("An unexpected error occurred");
-            e.printStackTrace();
+            handleError(e);
         }
     }
 
-    public void removeTaskView(){
+    private void removeTaskView() {
         try {
-            System.out.println("Enter the id of the task to remove: ");
-            String id = scanner.nextLine();
+            String id = askRequiredText("Enter the id of the task to remove: ");
             this.taskController.removeTask(id);
             System.out.println("Task removed successfully!!!");
-        } catch (TaskValidationException | TaskException e) {
-            System.out.println("Error: " + e.getMessage());
         } catch (Exception e) {
-            System.out.println("An unexpected error occurred");
-            e.printStackTrace();
+            handleError(e);
         }
     }
 
-    public void updateTaskView(){
+    private void updateTaskView() {
         try {
-            System.out.println("Update Task Id");
-            String id = scanner.nextLine();
-
-            System.out.println("Update Task Title");
-            String title = scanner.nextLine();
-
-            System.out.println("Update Task Description");
-            String description = scanner.nextLine();
-
-            System.out.println("Is the task completed? (true/false)");
-            Boolean completed = scanner.nextBoolean();
-            taskController.updateTask(id, title, description, completed);
+            TaskInput input = getTaskInput();
+            taskController.updateTask(input.id, input.title, input.description, input.completed);
             System.out.println("Task updated successfully!!!");
-        } catch (TaskValidationException | TaskException e) {
-            System.out.println("Error: " + e.getMessage());
         } catch (Exception e) {
-            System.out.println("An unexpected error occurred");
-            e.printStackTrace();
+            handleError(e);
         }
     }
 
-    public void showTasksView(){
+    private void showTasksView() {
         try {
             System.out.println("Task List: ");
             this.taskController.showTasks();
-        } catch (TaskValidationException | TaskException e) {
-            System.out.println("Error: " + e.getMessage());
         } catch (Exception e) {
-            System.out.println("An unexpected error occurred");
-            e.printStackTrace();
+            handleError(e);
         }
     }
 
+    private TaskInput getTaskInput() {
+        String id = askRequiredText("Task id: ");
+        String title = askRequiredText("Task title: ");
+        String description = askRequiredText("Task description: ");
+        boolean completed = askCompletedStatus();
+
+        return new TaskInput(id, title, description, completed);
+    }
+
+    private String askRequiredText(String message) {
+        String value;
+
+        do {
+            System.out.print(message);
+            value = scanner.nextLine().trim();
+
+            if (value.isEmpty()) {
+                System.out.println("This field is required.");
+            }
+        } while (value.isEmpty());
+
+        return value;
+    }
+
+    private int askMenuOption() {
+        while (true) {
+            System.out.print("Enter your choice: ");
+            String value = scanner.nextLine().trim();
+
+            try {
+                return Integer.parseInt(value);
+            } catch (NumberFormatException e) {
+                System.out.println("Please enter a valid number.");
+            }
+        }
+    }
+
+    private boolean askCompletedStatus() {
+        while (true) {
+            System.out.print("Is the task completed? (y/n): ");
+            String value = scanner.nextLine().trim().toLowerCase();
+
+            if (value.equals("y")) {
+                return true;
+            }
+
+            if (value.equals("n")) {
+                return false;
+            }
+
+            System.out.println("Please enter y or n.");
+        }
+    }
+
+    private void handleError(Exception e) {
+        System.out.println("Error: " + e.getMessage());
+    }
+
+    private static class TaskInput {
+        private final String id;
+        private final String title;
+        private final String description;
+        private final boolean completed;
+
+        private TaskInput(String id, String title, String description, boolean completed) {
+            this.id = id;
+            this.title = title;
+            this.description = description;
+            this.completed = completed;
+        }
+    }
 }
