@@ -18,6 +18,10 @@ public class TaskRepository {
         if (task==null){
             throw new TaskException("Task cannot be null");
         }
+
+        if (tasks.contains(task)){
+            throw new TaskException("Task is already in the list");
+        }
         tasks.add(task);
         TaskPersistence.saveTasks(tasks);
     }
@@ -96,7 +100,7 @@ public class TaskRepository {
                 completedTasks.add(task);
             }
         }
-        if (!completedTasks.isEmpty()) {
+        if (completedTasks.isEmpty()) {
             throw new TaskException("There are not completed tasks");
         }
         return completedTasks;
@@ -109,12 +113,11 @@ public class TaskRepository {
                 pendingTasks.add(task);
             }
         }
-        if (!pendingTasks.isEmpty()) {
-            throw new TaskException("There are not completed tasks");
+        if (pendingTasks.isEmpty()) {
+            throw new TaskException("There are not pending tasks");
         }
         return pendingTasks;
     }
 
 
 }
-

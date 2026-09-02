@@ -20,7 +20,10 @@ public class TaskView {
             System.out.println("2. Remove Task");
             System.out.println("3. Update Task");
             System.out.println("4. Show Tasks");
-            System.out.println("5. Exit");
+            System.out.println("5. Update Task Status");
+            System.out.println("6. Show Completed Tasks");
+            System.out.println("7. Show Pending Tasks");
+            System.out.println("8. Exit");
 
             int option = askMenuOption();
 
@@ -38,6 +41,15 @@ public class TaskView {
                     showTasksView();
                     break;
                 case 5:
+                    updateTaskCompletedView();
+                    break;
+                case 6:
+                    showCompletedTasksView();
+                    break;
+                case 7:
+                    showPendingTasksView();
+                    break;
+                case 8:
                     System.out.println("Exiting the application...");
                     return;
                 default:
@@ -71,6 +83,35 @@ public class TaskView {
             TaskInput input = getTaskInput();
             taskController.updateTask(input.id, input.title, input.description, input.completed);
             System.out.println("Task updated successfully!!!");
+        } catch (Exception e) {
+            handleError(e);
+        }
+    }
+
+    private void updateTaskCompletedView() {
+        try {
+            String id = askRequiredText("Enter the id of the task to update: ");
+            boolean completed = askCompletedStatus();
+            taskController.updateTaskCompleted(id, completed);
+            System.out.println("Task status updated successfully!!!");
+        } catch (Exception e) {
+            handleError(e);
+        }
+    }
+
+    public void showCompletedTasksView() {
+        try {
+            System.out.println("Completed Tasks: ");
+            taskController.showCompletedTasks();
+        } catch (Exception e) {
+            handleError(e);
+        }
+    }
+
+    public void showPendingTasksView() {
+        try {
+            System.out.println("Pending Tasks: ");
+            taskController.showPendingTasks();
         } catch (Exception e) {
             handleError(e);
         }
