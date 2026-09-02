@@ -79,6 +79,41 @@ public class TaskRepository {
         TaskPersistence.saveTasks(tasks);
     }
 
+    public void updateTaskCompleted(String id, Boolean completed) throws TaskException {
+
+        int index = findIndexById(id);
+        if (index==-1){
+            throw new TaskException("Invalid Index");
+        }
+        tasks.get(index).setCompleted(completed);
+        TaskPersistence.saveTasks(tasks);
+    }
+
+    public List<Task> findCompletedTasks() throws TaskException {
+        List<Task> completedTasks = new ArrayList<>();
+        for (Task task : tasks) {
+            if (task.getCompleted()) {
+                completedTasks.add(task);
+            }
+        }
+        if (!completedTasks.isEmpty()) {
+            throw new TaskException("There are not completed tasks");
+        }
+        return completedTasks;
+    }
+
+    public List<Task> findPendingTasks() throws TaskException {
+        List<Task> pendingTasks = new ArrayList<>();
+        for (Task task : tasks) {
+            if (!task.getCompleted()) {
+                pendingTasks.add(task);
+            }
+        }
+        if (!pendingTasks.isEmpty()) {
+            throw new TaskException("There are not completed tasks");
+        }
+        return pendingTasks;
+    }
 
 
 }
